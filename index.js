@@ -20,12 +20,14 @@ mongoose.connection.once('open', () => {
 });
 
 const shipwreckRouter = require('./routes/shipwrecksRoute');
+const pdfCreateRouter = require('./routes/pdfCreate');
 const requestLogger = require('./utilities/requestLogges');
 const errorLogger = require('./utilities/errorLogger');
 
 app.use(requestLogger)
 
 app.use('/ship',shipwreckRouter);
+app.use('/pdf',pdfCreateRouter);
 
 app.use(errorLogger)
 
