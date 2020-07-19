@@ -9,6 +9,7 @@
   "author": "dharmendra vaishnav (dv190196)",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.715.0",
     "chai": "^4.2.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",

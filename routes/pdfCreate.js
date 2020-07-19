@@ -3,6 +3,12 @@ var pdf = require("pdf-creator-node");
 var fs = require('fs');
 // Read HTML Template
 var html = fs.readFileSync('pdfTemplate.html', 'utf8');
+const AWS = require('aws-sdk');
+
+const ID = process.env.AWS_ID;
+const SECRET = process.env.AWS_SECRET_KEY;
+const BUCKET_NAME = process.env.S3_BUCKET;
+const FILE_NAME = `Test ${new Date()}.pdf`
 
 router.route('/generataPDF').get((req, res) => {
     var options = {
@@ -23,7 +29,7 @@ router.route('/generataPDF').get((req, res) => {
         }
     }
     };
-
+    //Hard coded data for test
     var users = [
         {
             name:"RSEB",
@@ -49,11 +55,27 @@ router.route('/generataPDF').get((req, res) => {
     pdf.create(document, options)
     .then(response => {
         console.log(response);
-        res.json("PDF Created")
-
+        const s3 = new AWS.S3({
+            accessKeyId: ID,
+            secretAccessKey: SECRET
+        });
+        const fileContent = fs.readFileSync('brandIt.pdf');
+        const params = {
+            Bucket: BUCKET_NAME,
+            Key: FILE_NAME, // File name you want to save as in S3
+            Body: fileContent
+        };
+        s3.upload(params, function(err, data) {
+            if (err) {
+                res.json("PDF Not uploaded")
+                //throw err;
+            }
+            res.json("PDF Uploaded to S3 Bucket")
+        });
     })
     .catch(error => {
         console.error(error)
+        //Todo Error handling in catch block
     });
 })
 
